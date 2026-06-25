@@ -103,14 +103,14 @@ def main():
     ir = [0] * 6
 
     #Criando log e lendo arquivo de textes:
-    with open('log.txt', 'w', encoding='utf-8') as log:
+    with open('APS1/log.txt', 'w', encoding='utf-8') as log:
         log.write(f"b = {b}\n")
         log.write(f"a = {a}\n")
         log.write("\n")
         log.write("Start of program\n")
 
         #Lendo texte que a professora disponibilizou como base
-        with open('teste.txt', 'r') as read:
+        with open('APS1/teste.txt', 'r') as read:
             for instrucao in read:
 
                 #ignora linhas vazias:
