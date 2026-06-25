@@ -1,3 +1,5 @@
+#Definindo operadores lógicos da mic-1:
+
 def andLogic(sup, low):
     if sup == 0:
         return 0
@@ -22,20 +24,34 @@ def xorLogic(sup, low):
     else:
         return 0
 
-def complem2(x):
-    s = []
-    i = 0
-    while i < len(x):
-        s.append(notLogic(x[i]))
+#Uma função auxiliar da ula que recebe A e B com 32 bits:
+def aux_ULA(lista_A, lista_B, f0, f1, enA, enB, invA, inc):
+    saida_final = [0] * 32
+    
+    #O sinal inc (0 ou 1) entra como o primeiro carry na posição mais à direita
+    carry_atual = inc  
 
-    inc = [0] * 31
-    inc.append(1)
+    for i in range(31, -1, -1):
+        #Pega o bit individual atual de cada vetor
+        bit_A = lista_A[i]
+        bit_B = lista_B[i]
+        
+        #Faz cada bit de a e b entrar na lógica da ULA
+        resultado_vai_um, resultado_saida = ULA(bit_A, bit_B, f0, f1, enA, enB, invA, carry_atual)
+        
+        #Guarda o bit gerado na posição correspondente da saída
+        saida_final[i] = resultado_saida
+        
+        #Caso a IR determine uma soma de bits, precisamos passar o vai-um de uma iteração para a próxima iteração
+        if f0 == 1 and f1 == 1:
+            carry_atual = resultado_vai_um
+        else:
+            carry_atual = 0
 
-    s = somaBin(s, inc)
-
-    print("Valor em complemento de 2")
-    return s
-
+    #Ao final das 32 iterações, o último carry_atual gerado na posição 0 é o Carry-out (co)
+    co_final = carry_atual
+    
+    return saida_final, co_final
 
 def ULA(A, B, f0, f1, enA, enB, invA, inc):
     #entrada superior
@@ -71,102 +87,10 @@ def ULA(A, B, f0, f1, enA, enB, invA, inc):
     opOr3low = orLogic(and10, and13)
     or3 = orLogic(opOr3sup, opOr3low) #Saida
 
-    return [or2, or3]
-
-def somaBin(a, b):
-    s = [0] * 32
-    carry = 0
-
-    for i in range(31, -1, -1):
-        soma = a[i] + b[i] + carry
-
-        if soma >= 2:
-            s[i] = soma % 2
-            carry = 1
-        else:
-            s[i] = soma
-            carry = 0
-
-    if carry == 1:
-        print("Overflow de memória, s = 0")
-        s = [0] * 32
-
-    return s
-
-def subtraBin(a, b):
-    s = [0] * 32
-    borrow = 0
-
-    for i in range(31, -1, -1):
-        diff = a[i] - b[i] - borrow
-
-        if diff < 0:
-            s[i] = diff + 2
-            borrow = 1
-        else:
-            s[i] = diff
-            borrow = 0
-
-    if borrow == 1:
-        s = complem2(s)
-
-    return s
-
-def operac(b, a, ir):
-    s = []
-    i = 0
-    inc = [0] * 31
-    inc.append(1)
-
-    if ir == [0,1,1,0,0,0] or ir == [1,1,1,0,0,0]:
-        s = a
-    elif ir == [0,1,0,1,0,0] or ir == [1,1,0,1,0,0]:
-        s = b
-    elif ir == [0,1,1,0,1,0]:
-        while i < len(a):
-            s.append(notLogic(a[i]))
-            i+=1
-    elif ir == [1,0,1,1,0,0]:
-        while i < len(b):
-            s.append(notLogic(b[i]))
-            i+=1
-    elif ir == [1,1,1,1,0,0]:
-        s = somaBin(a, b)
-    elif ir == [1,1,1,1,0,1]:
-        s = somaBin(a, b)
-        s = somaBin(s, inc)
-    elif ir == [1,1,1,0,0,1]:
-        s = somaBin(a, inc)
-    elif ir == [1,1,0,1,0,1]:
-        s = somaBin(b, inc)
-    elif ir == [1,1,1,1,1,1]:
-        s = subtraBin(b, a)
-    elif ir == [1,1,0,1,1,0]:
-        s = subtraBin(b, inc)
-    elif ir == [1,1,1,0,1,1]:
-        s = subtraBin(s, a)
-    elif ir == [0,0,1,1,0,0]:
-        while i < len(b):
-            s.append(andLogic(b[i], a[i]))
-            i+=1
-    elif ir == [0,1,1,1,0,0]:
-        while i < len(a):
-            s.append(orLogic(b[i], a[i]))
-            i+=1
-    elif ir == [0,1,0,0,0,0]:
-        s = [0] * 32
-    elif ir == [1,1,0,0,0,1]:
-        s = inc
-    elif ir == [1,1,0,0,1,0]:
-        s = complem2(inc)
-    else:
-        print("Instrucao invalida")
-        s = [0] * 32
-
-    return s
-
+    return or2, or3
 
 def main():
+    #Criando b e a:
     b = []
     while len(b) != 31:
         b.append(0)
@@ -178,16 +102,24 @@ def main():
     pc = 1
     ir = [0] * 6
 
+    #Criando log e lendo arquivo de textes:
     with open('log.txt', 'w', encoding='utf-8') as log:
         log.write(f"b = {b}\n")
         log.write(f"a = {a}\n")
         log.write("\n")
         log.write("Start of program\n")
 
+        #Lendo texte que a professora disponibilizou como base
         with open('teste.txt', 'r') as read:
             for instrucao in read:
+
+                #ignora linhas vazias:
+                if not instrucao.strip():
+                    continue
+
+                #Montando a instrução para ser lida pela ULA
                 i = 0
-                for h in instrucao:
+                for h in instrucao.strip():
                     if h == '0':
                         ir[i] = 0
                         i+=1
@@ -195,13 +127,30 @@ def main():
                         ir[i] = 1
                         i+=1
 
-                retornoULA = ULA(1, 1, ir[0], ir[1], ir[2], ir[3], ir[4], ir[5])
-                sBit = retornoULA[0]
-                vaiUm = retornoULA[1]
+                #Verificando ENA e ENB:
+                a_exibido = []
+                b_exibido = []
+                
+                #Caso 1, deixa os bits do mesmo jeito
+                if (ir[2] == 1):
+                    a_exibido = a
 
-                s = operac(b, a, ir)
+                #Caso 0, zera os 32 bits
+                elif (ir[2] == 0):
+                    a_exibido = [0] * 32
+                
+                #O mesmo para b:
+                if (ir[3] == 1):
+                    b_exibido = b
+                elif (ir[3] == 0):
+                    b_exibido = [0] * 32
+                
+                #Armazenando resultado e soma de A e B
+                s, vaiUm = aux_ULA(a_exibido,b_exibido, ir[0], ir[1], ir[2], ir[3], ir[4], ir[5])
 
-                escritor = ["====================\n", f"Cycle {pc}\n", "\n", f"PC = {pc}\n", f"IR = {ir}\n", f"b = {b}\n", f"a = {a}\n", f"s = {s}\n", f"co = {vaiUm}\n"]
+                #Escrevendo no log:
+                escritor = ["====================\n", f"Cycle {pc}\n", "\n", f"PC = {pc}\n", f"IR = {ir}\n", f"b = {b_exibido}\n", f"a = {a_exibido}\n", f"s = {s}\n", f"co = {vaiUm}\n"]
+                
                 i = 0
                 while i < 9:
                     log.write(escritor[i])
