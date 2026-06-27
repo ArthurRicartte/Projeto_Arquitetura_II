@@ -1,3 +1,8 @@
+#Funções úteis:
+def junta_bits(lista_bits):
+    # Transforma cada inteiro da lista em string e junta todos sem espaços
+    return "".join(map(str, lista_bits))
+
 #Definindo operadores lógicos da mic-1:
 
 def andLogic(sup, low):
@@ -174,9 +179,9 @@ def main():
     ir = [0] * 8
     
     #Criando log e lendo arquivo de textes:
-    with open('APS2_Tarefa1/log_Aps2_Etapa1.txt', 'w', encoding='utf-8') as log:
-        log.write(f"b = {b}\n")
-        log.write(f"a = {a}\n")
+    with open('APS2_Tarefa1/log_Aps2_Tarefa1.txt', 'w', encoding='utf-8') as log:
+        log.write(f"b = {junta_bits(b)}\n")
+        log.write(f"a = {junta_bits(a)}\n")
         log.write("\n")
         log.write("Start of program\n")
 
@@ -201,14 +206,14 @@ def main():
                         i+=1
                 
                 #Escrevendo cabeçalho:
-                log.write("=====================" * 5)
+                log.write("=====================" * 4)
                 log.write(f"\nCycle {pc}\n")
                 log.write("\n")
                 log.write(f"PC = {pc}\n")
 
                 #Verficação de SLL8 e SRA1
                 if (ir[0] == 1 and ir[1] == 1):  
-                    log.write(f"IR = {ir}\n")
+                    log.write(f"IR = {junta_bits(ir)}\n")
                     log.write("> Error, invalid control signals.\n") #SLL8 e SRA1 não podem ter nível lógico alto ao mesmo tempo
                     pc += 1
                     continue
@@ -236,11 +241,11 @@ def main():
 
                 #Escrevendo no log:
                 escritor = [
-                    f"IR = {ir}\n", 
-                    f"b = {b_exibido}\n", 
-                    f"a = {a_exibido}\n", 
-                    f"s = {s}\n", 
-                    f"sd = {sd}\n",   
+                    f"IR = {junta_bits(ir)}\n", 
+                    f"b = {junta_bits(b_exibido)}\n", 
+                    f"a = {junta_bits(a_exibido)}\n", 
+                    f"s = {junta_bits(s)}\n", 
+                    f"sd = {junta_bits(sd)}\n",   
                     f"n = {n}\n", 
                     f"z = {z}\n",
                     f"co = {vaiUm}\n"
@@ -256,7 +261,7 @@ def main():
         read.close()
 
         #Exibe no log que não tem mais nada a ser lido:
-        log.write("=====================" * 5)
+        log.write("=====================" * 4)
         log.write(f"\nCycle {pc}\n")
         log.write("\n")
         log.write(f"PC = {pc}\n")
