@@ -13,7 +13,7 @@
 
 ## 📌 Informações sobre o Projeto
 
-> Atualmente, a versão mais recente é referente à **APS 1**. A branch `main` está alinhada exclusivamente com os requisitos desta primeira etapa.
+> Atualmente, a versão mais recente é referente à **APS 2**. A branch `main` está alinhada exclusivamente com os requisitos desta segunda etapa.
 
 ### 📂 Estrutura de Arquivos Principais
 
