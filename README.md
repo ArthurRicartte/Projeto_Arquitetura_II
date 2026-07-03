@@ -17,6 +17,4 @@
 
 ### 📂 Estrutura de Arquivos Principais
 
-* **`APS1/APS_1.py`**: Arquivo principal que contém toda a lógica de simulação da ULA.
-* **`APS1/teste.txt`**: Arquivo que contém as instruções e entradas utilizadas como exemplo para os testes.
-* **`APS1/log.txt`**: Arquivo de saída gerado pelo simulador, está alinhado com os arquivos de saída disponibilizados pela professora.
+> Será adicionado no final do projeto
