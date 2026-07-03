@@ -33,8 +33,13 @@ def traduzir_instrucoes(caminho_instrucoes):
                 byte_arg = partes[1]
                 microinstrucoes_finais.append("00110101000001001000100")     # SP = MAR = SP + 1
                 
-                byte_val = int(byte_arg)
-                byte_bin = bin(byte_val & 0xff)[2:].zfill(8)
+                # verificacao de binario ou decimal?
+                if len(byte_arg) == 8 and all(c in '01' for c in byte_arg):
+                    byte_bin = byte_arg 
+                else:
+                    byte_val = int(byte_arg)
+                    byte_bin = bin(byte_val & 0xff)[2:].zfill(8)
+                    
                 instrucao_especial = byte_bin + "000000000110000"
                 microinstrucoes_finais.append(instrucao_especial)
                 
@@ -59,11 +64,13 @@ def main():
 
     with open(arq_log, 'w', encoding='utf-8') as log:
         log.write("=" * 60 + "\nInitial memory state\n" + "*" * 30 + "\n")
-        for linha in memoria_dados: log.write(linha + "\n")
+        for linha in memoria_dados:
+             log.write(linha + "\n")
         log.write("*" * 30 + "\nInitial register state\n" + "*" * 30 + "\n")
         
         ordem_regs = ["mar", "mdr", "pc", "mbr", "sp", "lv", "cpp", "tos", "opc", "h"]
-        for nome in ordem_regs: log.write(f"{nome} = {junta_bits(registradores[nome])}\n")
+        for nome in ordem_regs: 
+            log.write(f"{nome} = {junta_bits(registradores[nome])}\n")
         
         log.write("=" * 60 + "\nStart of Program\n" + "=" * 60 + "\n")
 
