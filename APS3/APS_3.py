@@ -1,13 +1,10 @@
 import copy
 
-# ========== Funções reutilizadas da APS2 (não alteradas) ==========
-
+# Funções úteis:
 def junta_bits(lista_bits):
-    """Transforma lista de bits em string sem espaços."""
     return "".join(map(str, lista_bits))
 
 def get_reg(bits):
-    """Retorna o nome do registrador correspondente aos 4 bits do barramento B."""
     mapeamento_b = {
         "0000": "mdr",
         "0001": "pc",
@@ -91,7 +88,7 @@ def ULA(A, B, f0, f1, enA, enB, invA, inc):
     # saida
     opOr3sup = orLogic(and8, and9)
     opOr3low = orLogic(and10, and13)
-    or3 = orLogic(opOr3sup, opOr3low)  # Saida
+    or3 = orLogic(opOr3sup, opOr3low)
 
     return or2, or3
 
@@ -204,7 +201,6 @@ def carregar_memoria_dados(caminho):
                 memoria.append(linha)
     return memoria
 
-# ========== Função principal da Etapa 3 ==========
 def main():
     # Caminhos dos arquivos fornecidos
     arq_dados = "dados_etapa3_tarefa1.txt"
@@ -297,7 +293,7 @@ def main():
                 if 0 <= endereco < len(memoria_dados):
                     registradores["mdr"] = inicializa_entrada(memoria_dados[endereco])
 
-            # ------ Log do ciclo ------
+            # Log do programa
             log.write(f"Cycle {pc}\n")
             log.write(f"ir = {junta_bits(bits_ula)} {junta_bits(bits_c)} {junta_bits(bits_mem)} {junta_bits(bits_b)}\n")
             # Registrador do barramento B
@@ -325,9 +321,8 @@ def main():
 
             pc += 1
 
-        # Fim do programa
+        # Exibe se não tiver nada a ser lido
         log.write(f"Cycle {pc}\n")
         log.write("No more lines, EOP.\n")
 
-if __name__ == "__main__":
-    main()
+main()
