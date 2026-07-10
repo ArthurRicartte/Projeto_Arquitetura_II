@@ -13,8 +13,15 @@
 
 ## 📌 Informações sobre o Projeto
 
-> Atualmente, a versão mais recente é referente à **Etapa 3**. A branch `main` está alinhada exclusivamente com os requisitos desta terceira etapa.
+> Atualmente, a versão mais recente é referente à **Entrega Final**. A branch `main` está alinhada exclusivamente com os requisitos desta ultima etapa.
 
 ### 📂 Estrutura de Arquivos Principais
+```text
+├── Entrega_Final
+│   ├── Entrega_Final.py      # Script principal (feito em python) com a lógica do simulador Mic-1
+│   ├── dados.txt             # Memória de dados para a simulação
+│   ├── instruções.txt        # Microinstruções a serem executadas
+│   ├── log.txt               # log gerado pela execução do programa
+│   └── registradores.txt     # Armazena o estado dos registradores
 
-> Será adicionado no final do projeto
+
