@@ -4,15 +4,15 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
-#Funções úteis:
+#funções teis:
 def junta_bits(lista_bits):
-    # Transforma cada inteiro da lista em string e junta todos sem espaços
+    # transforma cada inteiro da lista em string e junta todos sem espaços
     return "".join(map(str, lista_bits))
 
-#Função auxiliar para pegar os 4 bits mais a direita e retornar o o nome do registrador para impressão:
+#função auxiliar para pegar os 4 bits mais a direita e retornar o o nome do registrador para impressão:
 def get_reg(bits):
                 
-                #Dicionário para mapear os 4 bits para um registrador
+                #dicionário para mapear os 4 bits para um registrador
                 mapeamento_b = {
                                 "0000": "mdr",
                                 "0001": "pc",
@@ -25,13 +25,13 @@ def get_reg(bits):
                                 "1000": "tos"   
                             }
                 
-                #Formatando a lista de bits recebida para uma string 
+                #formatando a lista de bits recebida para uma string 
                 bits_b_formatado = "".join(map(str, bits))
 
-                #Tentando achar registrador corrpespondente:
+                #tentando achar registrador corrpespondente:
                 return mapeamento_b.get(bits_b_formatado, "nenhum")
     
-#Definindo operadores lógicos da mic-1:
+#def operadores lógicos da mic-1:
 
 def andLogic(sup, low):
     if sup == 0:
@@ -57,7 +57,7 @@ def xorLogic(sup, low):
     else:
         return 0
 
-#Função que verifica os bits da saída da ULA para determinar o campo Z:
+#função que verifica os bits da saída da ULA para determinar o campo Z:
 def define_Z(saida_ULA):
     #Para z ser 1, todos os 32 bits precisam ser 0
     for i in range(0,32):
@@ -66,7 +66,7 @@ def define_Z(saida_ULA):
     
     return 1
 
-#Função que verifica os bits da saída da ULA para determinar o campo N:
+#função que verifica os bits da saída da ULA para determinar o campo N:
 def define_N(f0, f1, co):
     #Caso f0 e f1 indiquem uma operação de soma, N é igual ao co, caso contrário, é igual a 0
     if (f0 == 1 and f1 == 1):
@@ -74,28 +74,28 @@ def define_N(f0, f1, co):
 
     return 0
 
-#Função que calcula descolamento à esquerda de 8 bits:
+#função que calcula descolamento à esquerda de 8 bits:
 def desloca_esquerda_logico (soma):
     saida_deslocada = [0] * 32
 
-    #Deslocando a saída 8 bits à esquerda:
+    #deslocando a saída 8 bits à esquerda:
     for i in range(0, 24):
         saida_deslocada[i] = soma[i + 8]
 
-    #Retornando saída com deslocamento de 8 bits:
+    #retornando saída com deslocamento de 8 bits:
     return saida_deslocada
 
-#Função que calcula deslocamento aritmético de 1 bit à direita:
+#função que calcula deslocamento aritmético de 1 bit à direita:
 def desloca_direita_aritmetico (soma):
     saida_deslocada = [0] * 32
 
-    #Duplicando primeiro bit da sequência (por ser uma soma aritmética, duplicamos o primeiro bit)
+    #duplicando primeiro bit da sequência (por ser uma soma aritmética, duplicamos o primeiro bit)
     saida_deslocada[0] = soma[0]
     for i in range(1, 32):
         #realizando deslocamento:
         saida_deslocada[i] = soma[i - 1] 
 
-    #Retornando saída da ULA deslocada 1 bit à direita:
+    #retornando saída da ULA deslocada 1 bit à direita:
     return saida_deslocada
 
 def ULA(A, B, f0, f1, enA, enB, invA, inc):
@@ -134,22 +134,22 @@ def ULA(A, B, f0, f1, enA, enB, invA, inc):
 
     return or2, or3
 
-#Uma função auxiliar da ula que recebe A e B com 32 bits:
+#uma função auxiliar da ula que recebe A e B com 32 bits:
 def aux_ULA(lista_A, lista_B, sll8, sra1, f0, f1, enA, enB, invA, inc):
     saida_final = [0] * 32
     
-    #O sinal inc (0 ou 1) entra como o primeiro carry na posição mais à direita
+    #o sinal inc (0 ou 1) entra como o primeiro carry na posição mais à direita
     carry_atual = inc  
 
     for i in range(31, -1, -1):
-        #Pega o bit individual atual de cada vetor
+        #pega o bit individual atual de cada vetor
         bit_A = lista_A[i]
         bit_B = lista_B[i]
         
-        #Faz cada bit de a e b entrar na lógica da ULA
+        #faz cada bit de a e b entrar na lógica da ULA
         resultado_vai_um, resultado_saida = ULA(bit_A, bit_B, f0, f1, enA, enB, invA, carry_atual)
         
-        #Guarda o bit gerado na posição correspondente da saída
+        #guarda o bit gerado na posição correspondente da saída
         saida_final[i] = resultado_saida
         
         #Caso a IR determine uma soma de bits, precisamos passar o vai-um de uma iteração para a próxima iteração
@@ -158,10 +158,10 @@ def aux_ULA(lista_A, lista_B, sll8, sra1, f0, f1, enA, enB, invA, inc):
         else:
             carry_atual = 0
 
-    #Ao final das 32 iterações, o último carry_atual gerado na posição 0 é o Carry-out (co)
+    #ao final das 32 iterações, o último carry_atual gerado na posição 0 é o carry-out (co)
     co_final = carry_atual
 
-    #Verifca os campos sll8, sra1:
+    #verifca os campos sll8, sra1:
     saida_deslocada = [0] * 32
     if (sll8 == 1):
         saida_deslocada = desloca_esquerda_logico(saida_final)
@@ -170,12 +170,12 @@ def aux_ULA(lista_A, lista_B, sll8, sra1, f0, f1, enA, enB, invA, inc):
     else:
         saida_deslocada = saida_final
     
-    #Determinando N e Z:
+    #determinando N e Z:
 
-    #Para Z, basta analisar se existe algum bit da saída que seja 1:
+    #para Z, basta analisar se existe algum bit da saída que seja 1:
     z = define_Z(saida_final)
 
-    #Para N, basta analisar f0, f1 e co_final:
+    #para N, basta analisar f0, f1 e co_final:
     n = define_N(f0, f1, co_final)
     
     return saida_final, saida_deslocada, n, z, co_final
@@ -188,7 +188,7 @@ def inicializa_entrada(entrada):
 
     entrada_inicializada = [0] * tamanho
     
-    #Preenche a lista com os respectivos números
+    #preenche a lista com os respectivos números
     for i in range(0,tamanho):
         if entrada[i] == '0':
             entrada_inicializada[i] = 0
@@ -197,9 +197,9 @@ def inicializa_entrada(entrada):
         
     return entrada_inicializada
 
-#Função para carregar os valores dos registradores no nosso programa:
+#função para carregar os valores dos registradores no nosso programa:
 def inicializar_registradores(caminho):
-    #Criando dicionário para armazenar registradores:
+    #criando dicionário para armazenar registradores:
     registradores = {
         "mar": [0]*32,
         "mdr": [0]*32,
@@ -215,23 +215,23 @@ def inicializar_registradores(caminho):
 
     with open(caminho, 'r', encoding= 'utf-8') as file:
         for linha in file:
-            #Tirando espaços em branco
+            #tirando espaços em branco
             linha = linha.strip()
 
-            #Pulando linhas em branco:
+            #pulando linhas em branco:
             if not linha:
                 continue
             
             #Separando registrador e valor em duas variáveis:
             r, valor = linha.split(' = ')
 
-            #Convertendo valor em uma lista para guardar no dicionário:
+            #convertendo valor em uma lista para guardar no dicionário:
             valor_listado = inicializa_entrada(valor)
 
-            #Tratando o nome de r para não dar erro:
+            #tratando o nome de r para não dar erro:
             r = r.lower()
 
-            #Inserindo valor do registrador no dicionário:
+            #inserindo valor do registrador no dicionário:
             registradores[r] = valor_listado
     
     return registradores
@@ -260,12 +260,12 @@ def ativa_registrador_b(reg, bits):
     else:
         return [0] * 32
 
-#Função para escrever o valor de sd nos registradores em específico:
+#função para escrever o valor de sd nos registradores em específico:
 def mapeamento_barramento_c(regs, barramento_c, sd):
     modificados = []
 
-    # Mapeamento direto seguindo a convenção padrão Mic-1 (esquerda para a direita)
-    #Caso cada bit esteja alto (1), signifca que o seu respectivo registrador será modificado 
+    #mapeamento direto seguindo a convenção padrão Mic-1 (esquerda para a direita)
+    #caso cada bit esteja alto (1), signifca que o seu respectivo registrador será modificado 
     if barramento_c[0] == 1:
         regs["h"] = sd
         modificados.append("H")
@@ -334,12 +334,9 @@ def traduzir_instrucoes(caminho_instrucoes):
                 byte_arg = partes[1]
                 microinstrucoes_finais.append("00110101000001001000100")     # SP = MAR = SP + 1
                 
-                # verificacao de binario ou decimal?
-                if len(byte_arg) == 8 and all(c in '01' for c in byte_arg):
-                    byte_bin = byte_arg 
-                else:
-                    byte_val = int(byte_arg)
-                    byte_bin = bin(byte_val & 0xff)[2:].zfill(8)
+                # Interpretando sempre como decimal
+                byte_val = int(byte_arg)
+                byte_bin = bin(byte_val & 0xff)[2:].zfill(8)
                     
                 instrucao_especial = byte_bin + "000000000110000"
                 microinstrucoes_finais.append(instrucao_especial)
